@@ -51,6 +51,16 @@
       "required": true,
       "value": ""
     },
+    "QUEUE_LIMIT": {
+      "description": "Maximum number of tracks allowed in one chat queue, including the currently playing track.",
+      "required": false,
+      "value": "10"
+    },
+    "PLAYLIST_FETCH_LIMIT": {
+      "description": "Maximum number of tracks imported from one playlist request.",
+      "required": false,
+      "value": "10"
+    },
     "YTPROXY_URL": {
       "description": "(Optional) Primary xBit music API endpoint. Leave as default unless you use another compatible endpoint.",
       "required": false,

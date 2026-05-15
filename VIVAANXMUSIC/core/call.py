@@ -67,6 +67,10 @@ def is_groupcall_invalid(err: Exception) -> bool:
     return type(err).__name__ == "GroupcallInvalid" or "GROUPCALL_INVALID" in str(err)
 
 
+def is_too_many_open_files(err: Exception) -> bool:
+    return getattr(err, "errno", None) == 24 or "too many open files" in str(err).lower()
+
+
 async def _clear_(chat_id: int) -> None:
     popped = db.pop(chat_id, None)
     if popped:
@@ -361,12 +365,20 @@ class Call:
                     )
                     await asyncio.sleep(1)
                 except Exception as err:
-                    if not is_groupcall_invalid(err) or attempt == 1:
+                    if not (
+                        is_groupcall_invalid(err) or is_too_many_open_files(err)
+                    ) or attempt == 1:
                         raise
-                    LOGGER(__name__).warning(
-                        "Retrying stream play for chat %s after Telegram returned GROUPCALL_INVALID.",
-                        chat_id,
-                    )
+                    if is_groupcall_invalid(err):
+                        LOGGER(__name__).warning(
+                            "Retrying stream play for chat %s after Telegram returned GROUPCALL_INVALID.",
+                            chat_id,
+                        )
+                    else:
+                        LOGGER(__name__).warning(
+                            "Retrying stream play for chat %s after hitting open-file limit.",
+                            chat_id,
+                        )
                     await asyncio.sleep(1)
 
 
@@ -537,6 +549,10 @@ class Call:
         except Exception as e:
             if is_groupcall_invalid(e):
                 raise AssistantErr(_["call_8"])
+            if is_too_many_open_files(e):
+                raise AssistantErr(
+                    "Server open-file limit reached. Please try again in a few seconds."
+                )
             raise AssistantErr(
                 f"ᴜɴᴀʙʟᴇ ᴛᴏ ᴊᴏɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ ᴄᴀʟʟ.\nRᴇᴀsᴏɴ: {e}"
             )
