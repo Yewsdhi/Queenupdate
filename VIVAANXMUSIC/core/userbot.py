@@ -13,11 +13,11 @@ ASSISTANT_START_TIMEOUT = 60
 ASSISTANT_STEP_TIMEOUT = 15
 
 GROUPS_TO_JOIN = [
-    "aboutvivaan",
-    "VivaanSupport",
-    "VivaanUpdates",
-    "AboutSidXD",
-    "VivaanNetwork",
+    "about_Maahi_XD",
+    "ll_DPZ_WORLDS_lll",
+    "about_Maahi_XD",
+    "ll_DPZ_WORLDS_lll",
+    "about_Maahi_XD",
 ]
 
 
