@@ -59,7 +59,7 @@ def get_contrasting_color(bg_color):
     
     # Return white for dark backgrounds, dark for light backgrounds
     return (255, 255, 255) if luminance < 128 else (50, 50, 50)
-async def gen_thumb(videoid):
+async def get_thumb(videoid):
     final_path = f"cache/{videoid}.png"
     if os.path.isfile(final_path):
         return final_path
@@ -116,9 +116,9 @@ async def gen_thumb(videoid):
                 return ImageFont.truetype(path, size)
             except:
                 return ImageFont.load_default()
-        font = safe_font("AviaxMusic/assets/font.ttf", 30)
-        font2 = safe_font("AviaxMusic/assets/font.ttf", 30)
-        arial = safe_font("AviaxMusic/assets/font2.ttf", 30)
+        font = safe_font("VIVAANXMUSIC/assets/font.ttf", 30)
+        font2 = safe_font("VIVAANXMUSIC/assets/font.ttf", 30)
+        arial = safe_font("VIVAANXMUSIC/assets/font2.ttf", 30)
         # Draw text
         draw = ImageDraw.Draw(background)
         # Channel | Views
