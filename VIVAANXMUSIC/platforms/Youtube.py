@@ -1,12 +1,22 @@
 import asyncio
+import json
 import os
 import re
+import shlex
+from concurrent.futures import ThreadPoolExecutor
 from typing import Union
+import string
+import requests
 import yt_dlp
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from youtubesearchpython.future import VideosSearch
-import aiohttp
+try:
+    from youtubesearchpython.future.extras import Recommendations
+except ImportError:
+    Recommendations = None
 
 API_URL = os.environ.get("SHRUTI_API_URL", "https://api.shrutibots.site")
 
