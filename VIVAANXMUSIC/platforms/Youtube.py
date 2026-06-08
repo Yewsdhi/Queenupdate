@@ -17,7 +17,7 @@ import httpx
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 
-from AloneMusic import LOGGER
+from VIVAANXMUSIC import LOGGER
 
 # Use environment variables for configuration
 API_URL = os.getenv("API_URL", "https://api.riteshyt.in").rstrip("/")
