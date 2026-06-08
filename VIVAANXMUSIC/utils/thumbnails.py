@@ -7,7 +7,7 @@ import textwrap
 import numpy as np
 import aiofiles
 import aiohttp
-from PIL import (
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
     Image,
     ImageDraw,
     ImageEnhance,
