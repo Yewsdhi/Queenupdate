@@ -5,6 +5,7 @@ from typing import Union
 import yt_dlp
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
+from py_yt import VideosSearch
 from youtubesearchpython import VideosSearch
 import aiohttp
 
