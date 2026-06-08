@@ -81,7 +81,7 @@ STRING5 = getenv("STRING_SESSION5")
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
 "https://files.catbox.moe/zj7lua.mp4",
-"https://files.catbox.moe/4uswwx.mp4",
+"https://files.catbox.moe/3hewg5.mp4",
 "https://files.catbox.moe/dbeovj.mp4",
 "https://files.catbox.moe/aoenkf.mp4",
 "https://files.catbox.moe/zel6kq.mp4",
@@ -95,7 +95,7 @@ STICKERS = [
     "CAACAgUAAx0Cd6nKUAACATJl_rsEJOsaaPSYGhU7bo7iEwL8AAPMDgACu2PYV8Vb8aT4_HUPHgQ",
 ]
 HELP_IMG_URL = "https://files.catbox.moe/22oahi.jpg"
-PING_VID_URL = "https://files.catbox.moe/5z1qte.mp4"
+PING_VID_URL = "https://files.catbox.moe/uzse4i.mp4"
 PLAYLIST_IMG_URL = "https://files.catbox.moe/u79q4y.jpg"
 STATS_VID_URL = "https://files.catbox.moe/uo4lc8.mp4"
 TELEGRAM_AUDIO_URL = "https://files.catbox.moe/eis7ei.jpg"
