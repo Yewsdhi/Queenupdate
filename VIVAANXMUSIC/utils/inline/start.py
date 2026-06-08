@@ -34,7 +34,7 @@ def private_panel(_):
             )
         ],
         [
-            primary_button(
+            success_button(
                 text=_["S_B_7"],
                 user_id=config.OWNER_ID,
             ),
