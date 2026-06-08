@@ -8,7 +8,7 @@ import numpy as np
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-)
+
 from youtubesearchpython import VideosSearch
 from config import YOUTUBE_IMG_URL
 def changeImageSize(maxWidth, maxHeight, image):
