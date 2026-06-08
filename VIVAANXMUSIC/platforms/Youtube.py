@@ -12,7 +12,7 @@ import os
 import re
 import urllib.parse
 from typing import Union
-
+import yt_dlp
 import httpx
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
@@ -92,22 +92,32 @@ class YouTubeAPI:
             link = link.split("&si=")[0]
         return link
 
-    async def _fetch_details(self, link: str):
-        link = self._clean_link(link)
-        client = await self.get_client()
-        params = {"link": link}
-        if API_KEY:
-            params["api_key"] = API_KEY
-        try:
-            response = await client.get(f"{API_URL}/details", params=params)
-            if response.status_code == 200:
-                return response.json()
-            else:
-                LOGGER(__name__).error(
-                    f"API Error ({response.status_code}): {response.text}"
-                )
-        except Exception as e:
-            LOGGER(__name__).error(f"Error fetching details from API: {e}")
+    async def fallback_details(self, query: str):
+    ydl_opts = {
+        "quiet": True,
+        "no_warnings": True,
+        "format": "bestaudio/best",
+        "default_search": "ytsearch1",
+    }
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(query, download=False)
+
+            if "entries" in info:
+                info = info["entries"][0]
+
+            return {
+                "title": info.get("title"),
+                "duration_min": str(info.get("duration") // 60),
+                "duration_sec": info.get("duration"),
+                "thumbnail": info.get("thumbnail"),
+                "vidid": info.get("id"),
+                "link": f"https://youtu.be/{info.get('id')}",
+            }
+
+    except Exception as e:
+        LOGGER(__name__).error(f"yt-dlp fallback failed: {e}")
         return None
 
     async def details(self, link: str, videoid: Union[bool, str] = None):
