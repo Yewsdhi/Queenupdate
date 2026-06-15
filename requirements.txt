@@ -31,7 +31,6 @@ pyfiglet
 pyshorteners
 python-dotenv
 python-whois
-py-yt
 git+https://github.com/SkyBotsDeveloper/youtube-search-python.git
 pyyaml
 qrcode
@@ -44,4 +43,3 @@ tgcrypto
 unidecode
 wget
 yt-dlp==2026.3.17
-
