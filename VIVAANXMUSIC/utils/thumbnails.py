@@ -23,8 +23,8 @@ class Thumbnail:
         self.rect = (914, 514)
         self.fill = (255, 255, 255)
         try:
-            self.font1 = ImageFont.truetype("KartikMusic/helpers/Raleway-Bold.ttf", 30)
-            self.font2 = ImageFont.truetype("KartikMusic/helpers/Inter-Light.ttf", 30)
+            self.font1 = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/Raleway-Bold.ttf", 30)
+            self.font2 = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/Inter-Light.ttf", 30)
         except Exception:
             self.font1 = ImageFont.load_default()
             self.font2 = ImageFont.load_default()
