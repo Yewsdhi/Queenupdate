@@ -13,10 +13,10 @@ from ._dataclass import CachedTrack
 from cloudymusic.logger import LOGGER
 
 FONTS = {
-    "cfont": ImageFont.truetype("cloudymusic/modules/utils/cfont.ttf", 15),
-    "dfont": ImageFont.truetype("cloudymusic/modules/utils/font2.otf", 12),
-    "nfont": ImageFont.truetype("cloudymusic/modules/utils/font.ttf", 10),
-    "tfont": ImageFont.truetype("cloudymusic/modules/utils/font.ttf", 20),
+    "cfont": ImageFont.truetype("VIVAANXMUSIC/assets/thumb/cfont.ttf", 15),
+    "dfont": ImageFont.truetype("VIVAANXMUSIC/assets/thumb/font2.otf", 12),
+    "nfont": ImageFont.truetype("VIVAANXMUSIC/assets/thumb/font.ttf", 10),
+    "tfont": ImageFont.truetype("VIVAANXMUSIC/assets/thumb/font.ttf", 20),
 }
 
 
