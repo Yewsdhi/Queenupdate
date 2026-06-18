@@ -1,109 +1,100 @@
-#
-# Copyright (C) 2025-present by TheAloneTeam@Github, < https://github.com/TheAloneTeam >.
-#
-# This file is part of < https://github.com/TheAloneTeam/KartikMusic > project,
-# and is released under the "MIT License".
-# Please see < https://github.com/TheAloneTeam/KartikMusic/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
-import asyncio
-import os
-
-import aiohttp
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
-
-from VIVAANXMUSIC import config
-from VIVAANXMUSIC.helpers import Track
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import requests
+from io import BytesIO
 
 
-class Thumbnail:
-    def __init__(self):
-        self.rect = (914, 514)
-        self.fill = (255, 255, 255)
-        try:
-            self.font1 = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/Raleway-Bold.ttf", 30)
-            self.font2 = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/Inter-Light.ttf", 30)
-        except Exception:
-            self.font1 = ImageFont.load_default()
-            self.font2 = ImageFont.load_default()
-        self.session: aiohttp.ClientSession | None = None
+async def generate_thumbnail(
+    thumbnail_url: str,
+    title: str,
+    duration: str,
+    output: str = "VivaanXMusic.png",
+):
+    # Download thumbnail
+    response = requests.get(thumbnail_url)
+    cover = Image.open(BytesIO(response.content)).convert("RGB")
 
-    async def start(self) -> None:
-        self.session = aiohttp.ClientSession()
+    # Background
+    bg = cover.resize((1280, 720))
+    bg = bg.filter(ImageFilter.GaussianBlur(18))
 
-    async def close(self) -> None:
-        if self.session:
-            await self.session.close()
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 120))
+    bg = Image.alpha_composite(bg.convert("RGBA"), overlay)
 
-    async def save_thumb(self, output_path: str, url: str) -> str:
-        async with self.session.get(url) as resp:
-            with open(output_path, "wb") as f:
-                f.write(await resp.read())
-        return output_path
+    # Main Cover
+    cover = cover.resize((520, 520))
+    bg.paste(cover, (70, 100))
 
-    def _draw_image(self, temp, output, song: Track, size=(1280, 720)):
-        thumb = (
-            Image.open(temp)
-            .convert("RGBA")
-            .resize(
-                size,
-                Image.Resampling.LANCZOS,
-            )
-        )
-        blur = thumb.filter(ImageFilter.GaussianBlur(25))
-        image = ImageEnhance.Brightness(blur).enhance(0.40)
+    draw = ImageDraw.Draw(bg)
 
-        _rect = ImageOps.fit(
-            thumb,
-            self.rect,
-            method=Image.LANCZOS,
-            centering=(0.5, 0.5),
-        )
-        mask = Image.new("L", self.rect, 0)
-        ImageDraw.Draw(mask).rounded_rectangle(
-            (0, 0, self.rect[0], self.rect[1]),
-            radius=15,
-            fill=255,
-        )
-        _rect.putalpha(mask)
-        image.paste(_rect, (183, 30), _rect)
+    try:
+        title_font = ImageFont.truetype("arial.ttf", 55)
+        text_font = ImageFont.truetype("arial.ttf", 35)
+        icon_font = ImageFont.truetype("arial.ttf", 75)
+    except:
+        title_font = ImageFont.load_default()
+        text_font = ImageFont.load_default()
+        icon_font = ImageFont.load_default()
 
-        draw = ImageDraw.Draw(image)
-        draw.text(
-            xy=(50, 560),
-            text=f"{(song.channel_name or 'Unknown')[:25]} | {song.view_count or 0}",
-            font=self.font2,
-            fill=self.fill,
-        )
-        draw.text(
-            (50, 600), (song.title or "Unknown")[:50], font=self.font1, fill=self.fill
-        )
-        draw.text((40, 650), "0:01", font=self.font1)
-        draw.line([(140, 670), (1160, 670)], fill=self.fill, width=5, joint="curve")
-        draw.text(
-            (1185, 650), song.duration or "00:00", font=self.font1, fill=self.fill
-        )
+    # Song Title
+    title = title[:35]
+    draw.text((650, 120), title, fill="white", font=title_font)
 
-        image.save(output)
-        return output
+    # Bot Name
+    draw.text(
+        (650, 200),
+        "🎵 VivaanXMusic",
+        fill=(220, 220, 220),
+        font=text_font,
+    )
 
-    async def generate(self, song: Track, size=(1280, 720)) -> str:
-        try:
-            temp = f"cache/temp_{song.id}.jpg"
-            output = f"cache/{song.id}.png"
-            if os.path.exists(output):
-                return output
+    # Progress Bar
+    draw.line(
+        (650, 290, 1180, 290),
+        fill=(255, 255, 255),
+        width=8,
+    )
 
-            await self.save_thumb(temp, song.thumbnail)
+    draw.ellipse(
+        (790, 275, 820, 305),
+        fill="white",
+    )
 
-            await asyncio.to_thread(self._draw_image, temp, output, song, size)
+    draw.text(
+        (650, 320),
+        "0:03",
+        fill="white",
+        font=text_font,
+    )
 
-            try:
-                os.remove(temp)
-            except Exception:
-                pass
-            return output
-        except Exception:
-            return config.DEFAULT_THUMB
+    draw.text(
+        (1100, 320),
+        f"-{duration}",
+        fill="white",
+        font=text_font,
+    )
+
+    # Controls
+    draw.text((760, 410), "⏮", fill="white", font=icon_font)
+    draw.text((870, 410), "⏸", fill="white", font=icon_font)
+    draw.text((1010, 410), "⏭", fill="white", font=icon_font)
+
+    # Volume Bar
+    draw.line(
+        (720, 560, 1100, 560),
+        fill="white",
+        width=8,
+    )
+
+    draw.text((670, 535), "🔈", fill="white", font=text_font)
+    draw.text((1120, 535), "🔊", fill="white", font=text_font)
+
+    # Footer
+    draw.text(
+        (820, 640),
+        "Powered By VivaanXMusic",
+        fill=(180, 180, 180),
+        font=text_font,
+    )
+
+    bg.save(output)
+    return output
