@@ -1,7 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from io import BytesIO
 import requests
-import os
 
 async def get_thumb(
 thumb_url,
@@ -10,19 +9,31 @@ duration,
 output="thumb.png"
 ):
 try:
-r = requests.get(thumb_url, timeout=10)
-cover = Image.open(BytesIO(r.content)).convert("RGB")
+response = requests.get(thumb_url, timeout=10)
+response.raise_for_status()
 
-    # Background
+    cover = Image.open(
+        BytesIO(response.content)
+    ).convert("RGB")
+
+    # Blur Background
     bg = cover.resize((1280, 720))
     bg = bg.filter(ImageFilter.GaussianBlur(25))
 
-    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 140))
-    bg = Image.alpha_composite(bg.convert("RGBA"), overlay)
+    overlay = Image.new(
+        "RGBA",
+        bg.size,
+        (0, 0, 0, 140)
+    )
 
-    # Cover
-    cover = cover.resize((500, 500))
-    bg.paste(cover, (80, 110))
+    bg = Image.alpha_composite(
+        bg.convert("RGBA"),
+        overlay
+    )
+
+    # Album Cover
+    album = cover.resize((500, 500))
+    bg.paste(album, (80, 110))
 
     draw = ImageDraw.Draw(bg)
 
@@ -31,15 +42,17 @@ cover = Image.open(BytesIO(r.content)).convert("RGB")
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             55
         )
+
         text_font = ImageFont.truetype(
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             35
         )
-    except:
+
+    except Exception:
         title_font = ImageFont.load_default()
         text_font = ImageFont.load_default()
 
-    # Title
+    # Song Title
     draw.text(
         (650, 120),
         str(title)[:30],
@@ -49,25 +62,66 @@ cover = Image.open(BytesIO(r.content)).convert("RGB")
 
     # Bot Name
     draw.text(
-        (650, 200),
+        (650, 210),
         "VIVAANXMUSIC",
         fill="white",
         font=text_font
     )
 
+    # Progress Bar
+    draw.line(
+        (650, 300, 1180, 300),
+        fill="white",
+        width=8
+    )
+
+    draw.ellipse(
+        (760, 285, 790, 315),
+        fill="white"
+    )
+
     # Duration
     draw.text(
-        (650, 300),
-        f"Duration : {duration}",
+        (650, 340),
+        "0:03",
         fill="white",
         font=text_font
     )
 
+    draw.text(
+        (1080, 340),
+        f"-{duration}",
+        fill="white",
+        font=text_font
+    )
+
+    # Controls
+    draw.text(
+        (760, 430),
+        "<<",
+        fill="white",
+        font=title_font
+    )
+
+    draw.text(
+        (900, 420),
+        "||",
+        fill="white",
+        font=title_font
+    )
+
+    draw.text(
+        (1030, 430),
+        ">>",
+        fill="white",
+        font=title_font
+    )
+
     # Footer
     draw.text(
-        (700, 650),
+        (720, 650),
         "Powered By VIVAANXMUSIC",
-        fill="white",
+        fill=(220, 220, 220),
         font=text_font
     )
 
@@ -77,5 +131,5 @@ cover = Image.open(BytesIO(r.content)).convert("RGB")
     return output
 
 except Exception as e:
-    print("Thumbnail Error:", e)
+    print(f"Thumbnail Error: {e}")
     return None
