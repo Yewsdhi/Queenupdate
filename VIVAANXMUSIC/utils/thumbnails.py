@@ -1,135 +1,54 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from io import BytesIO
 import requests
+from io import BytesIO
 
-async def get_thumb(
-thumb_url,
-title,
-duration,
-output="thumb.png"
-):
-try:
-response = requests.get(thumb_url, timeout=10)
-response.raise_for_status()
 
-    cover = Image.open(
-        BytesIO(response.content)
-    ).convert("RGB")
+async def get_thumb(thumb_url, title, duration):
+    try:
+        response = requests.get(thumb_url, timeout=10)
+        image = Image.open(BytesIO(response.content)).convert("RGB")
+    except Exception:
+        image = Image.new("RGB", (1280, 720), (20, 20, 20))
+
+    image = image.resize((1280, 720))
 
     # Blur Background
-    bg = cover.resize((1280, 720))
-    bg = bg.filter(ImageFilter.GaussianBlur(25))
+    bg = image.copy().filter(ImageFilter.GaussianBlur(15))
 
-    overlay = Image.new(
-        "RGBA",
-        bg.size,
-        (0, 0, 0, 140)
-    )
-
-    bg = Image.alpha_composite(
-        bg.convert("RGBA"),
-        overlay
-    )
-
-    # Album Cover
-    album = cover.resize((500, 500))
-    bg.paste(album, (80, 110))
+    # Dark Overlay
+    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 120))
+    bg = Image.alpha_composite(bg.convert("RGBA"), overlay)
 
     draw = ImageDraw.Draw(bg)
 
     try:
-        title_font = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-            55
-        )
+        font_title = ImageFont.truetype("arial.ttf", 55)
+        font_duration = ImageFont.truetype("arial.ttf", 40)
+    except:
+        font_title = ImageFont.load_default()
+        font_duration = ImageFont.load_default()
 
-        text_font = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            35
-        )
+    # Small Cover
+    cover = image.resize((300, 300))
+    bg.paste(cover, (100, 200))
 
-    except Exception:
-        title_font = ImageFont.load_default()
-        text_font = ImageFont.load_default()
-
-    # Song Title
+    # Title
     draw.text(
-        (650, 120),
-        str(title)[:30],
+        (450, 250),
+        title[:40],
         fill="white",
-        font=title_font
-    )
-
-    # Bot Name
-    draw.text(
-        (650, 210),
-        "VIVAANXMUSIC",
-        fill="white",
-        font=text_font
-    )
-
-    # Progress Bar
-    draw.line(
-        (650, 300, 1180, 300),
-        fill="white",
-        width=8
-    )
-
-    draw.ellipse(
-        (760, 285, 790, 315),
-        fill="white"
+        font=font_title,
     )
 
     # Duration
     draw.text(
-        (650, 340),
-        "0:03",
+        (450, 340),
+        f"Duration: {duration}",
         fill="white",
-        font=text_font
+        font=font_duration,
     )
 
-    draw.text(
-        (1080, 340),
-        f"-{duration}",
-        fill="white",
-        font=text_font
-    )
-
-    # Controls
-    draw.text(
-        (760, 430),
-        "<<",
-        fill="white",
-        font=title_font
-    )
-
-    draw.text(
-        (900, 420),
-        "||",
-        fill="white",
-        font=title_font
-    )
-
-    draw.text(
-        (1030, 430),
-        ">>",
-        fill="white",
-        font=title_font
-    )
-
-    # Footer
-    draw.text(
-        (720, 650),
-        "Powered By VIVAANXMUSIC",
-        fill=(220, 220, 220),
-        font=text_font
-    )
-
-    bg = bg.convert("RGB")
-    bg.save(output, quality=95)
+    output = "thumbnail.png"
+    bg.convert("RGB").save(output)
 
     return output
-
-except Exception as e:
-    print(f"Thumbnail Error: {e}")
-    return None
