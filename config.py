@@ -84,11 +84,11 @@ START_VIDS = [
 "https://files.catbox.moe/vit1v6.jpg",
 "https://files.catbox.moe/gmeopu.jpg",
 "https://files.catbox.moe/bkyvw6.jpg",
-"https://files.catbox.moe/zel6kq.mp4",
-"https://files.catbox.moe/x36bl7.mp4",
-"https://files.catbox.moe/wyt9n5.mp4",
-"https://files.catbox.moe/fdo5j5.mp4",
-"https://files.catbox.moe/meljwi.mp4",
+"https://files.catbox.moe/wbhtev.jpg",
+"https://files.catbox.moe/kmzajp.jpg",
+"https://files.catbox.moe/i2qt1c.jpg",
+"https://files.catbox.moe/o6xo0v.jpg",
+"https://files.catbox.moe/ugi9w5.jpg",
 ]
 STICKERS = [
     "CAACAgUAAx0Cd6nKUAACASBl_rnalOle6g7qS-ry-aZ1ZpVEnwACgg8AAizLEFfI5wfykoCR4h4E",
@@ -97,7 +97,7 @@ STICKERS = [
 HELP_IMG_URL = "https://files.catbox.moe/22oahi.jpg"
 PING_VID_URL = "https://files.catbox.moe/cggw4y.mp4"
 PLAYLIST_IMG_URL = "https://files.catbox.moe/u79q4y.jpg"
-STATS_VID_URL = "https://files.catbox.moe/uo4lc8.mp4"
+STATS_VID_URL = "https://files.catbox.moe/cggw4y.mp4"
 TELEGRAM_AUDIO_URL = "https://files.catbox.moe/eis7ei.jpg"
 TELEGRAM_VIDEO_URL = "https://files.catbox.moe/eis7ei.jpg"
 STREAM_IMG_URL = "https://files.catbox.moe/eis7ei.jpg"
