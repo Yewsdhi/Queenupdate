@@ -80,11 +80,6 @@ STRING5 = getenv("STRING_SESSION5")
 
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
-"https://files.catbox.moe/vem5xr.jpg",
-"https://files.catbox.moe/vit1v6.jpg",
-"https://files.catbox.moe/gmeopu.jpg",
-"https://files.catbox.moe/bkyvw6.jpg",
-"https://files.catbox.moe/wbhtev.jpg",
 "https://files.catbox.moe/kmzajp.jpg",
 "https://files.catbox.moe/i2qt1c.jpg",
 "https://files.catbox.moe/o6xo0v.jpg",
