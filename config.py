@@ -80,9 +80,13 @@ STRING5 = getenv("STRING_SESSION5")
 
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
-    "https://files.catbox.moe/fu6jk3.jpg",
-    "https://files.catbox.moe/26nzoq.jpg",
-    "https://files.catbox.moe/26nzoq.jpg",
+"https://files.catbox.moe/gmeopu.jpg",
+"https://files.catbox.moe/kmzajp.jpg",
+"https://files.catbox.moe/6ndo9l.jpg",
+"https://files.catbox.moe/3jh1cc.jpg",
+"https://files.catbox.moe/3jh1cc.jpg",
+"https://files.catbox.moe/m0a3nv.jpg",
+"https://files.catbox.moe/3dve0a.jpg",
 ]
 STICKERS = [
     "CAACAgUAAx0Cd6nKUAACASBl_rnalOle6g7qS-ry-aZ1ZpVEnwACgg8AAizLEFfI5wfykoCR4h4E",
