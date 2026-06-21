@@ -1,54 +1,127 @@
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import requests
-from io import BytesIO
+import os
+import aiohttp
+import aiofiles
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageFont
+from youtubesearchpython.future import VideosSearch
 
+CACHE_DIR = "cache"
+os.makedirs(CACHE_DIR, exist_ok=True)
 
-async def get_thumb(thumb_url, title, duration):
+async def get_thumb(videoid):
+    output = f"{CACHE_DIR}/{videoid}.png"
+
+    if os.path.exists(output):
+        return output
+
     try:
-        response = requests.get(thumb_url, timeout=10)
-        image = Image.open(BytesIO(response.content)).convert("RGB")
+        search = VideosSearch(
+            f"https://www.youtube.com/watch?v={videoid}",
+            limit=1,
+        )
+        data = await search.next()
+        result = data["result"][0]
+
+        title = result["title"][:40]
+        duration = result.get("duration", "Live")
+        views = result.get("viewCount", {}).get("short", "Unknown")
+        thumb_url = result["thumbnails"][0]["url"]
+
     except Exception:
-        image = Image.new("RGB", (1280, 720), (20, 20, 20))
+        title = "Unknown Track"
+        duration = "Live"
+        views = "Unknown"
+        thumb_url = f"https://i.ytimg.com/vi/{videoid}/hqdefault.jpg"
 
-    image = image.resize((1280, 720))
+    thumb_file = f"{CACHE_DIR}/{videoid}_yt.jpg"
 
-    # Blur Background
-    bg = image.copy().filter(ImageFilter.GaussianBlur(15))
+    async with aiohttp.ClientSession() as session:
+        async with session.get(thumb_url) as resp:
+            if resp.status == 200:
+                async with aiofiles.open(thumb_file, "wb") as f:
+                    await f.write(await resp.read())
 
-    # Dark Overlay
-    overlay = Image.new("RGBA", bg.size, (0, 0, 0, 120))
-    bg = Image.alpha_composite(bg.convert("RGBA"), overlay)
+    bg = Image.open(thumb_file).convert("RGBA")
+    bg = bg.resize((1280, 720))
+    bg = bg.filter(ImageFilter.GaussianBlur(20))
+    bg = ImageEnhance.Brightness(bg).enhance(0.5)
+
+    cover = Image.open(thumb_file).convert("RGBA")
+    cover = cover.resize((450, 450))
+
+    bg.paste(cover, (70, 135))
 
     draw = ImageDraw.Draw(bg)
 
     try:
-        font_title = ImageFont.truetype("arial.ttf", 55)
-        font_duration = ImageFont.truetype("arial.ttf", 40)
+        title_font = ImageFont.truetype(
+            "VIVAANXMUSIC/assets/thumb/font2.ttf",
+            42,
+        )
+        small_font = ImageFont.truetype(
+            "VIVAANXMUSIC/assets/thumb/font.ttf",
+            28,
+        )
     except:
-        font_title = ImageFont.load_default()
-        font_duration = ImageFont.load_default()
+        title_font = ImageFont.load_default()
+        small_font = ImageFont.load_default()
 
-    # Small Cover
-    cover = image.resize((300, 300))
-    bg.paste(cover, (100, 200))
-
-    # Title
     draw.text(
-        (450, 250),
-        title[:40],
+        (580, 170),
+        title,
         fill="white",
-        font=font_title,
+        font=title_font,
     )
 
-    # Duration
     draw.text(
-        (450, 340),
-        f"Duration: {duration}",
+        (580, 240),
+        f"👁 {views}",
         fill="white",
-        font=font_duration,
+        font=small_font,
     )
 
-    output = "thumbnail.png"
-    bg.convert("RGB").save(output)
+    draw.text(
+        (580, 290),
+        f"⏱ {duration}",
+        fill="white",
+        font=small_font,
+    )
+
+    draw.line(
+        (580, 360, 1100, 360),
+        fill="white",
+        width=8,
+    )
+
+    draw.line(
+        (580, 360, 820, 360),
+        fill="red",
+        width=8,
+    )
+
+    draw.ellipse(
+        (810, 350, 830, 370),
+        fill="red",
+    )
+
+    draw.text(
+        (650, 450),
+        "⏮      ⏯      ⏭",
+        fill="white",
+        font=title_font,
+    )
+
+    draw.text(
+        (580, 600),
+        "🎵 Powered By VIVAAN MUSIC",
+        fill="white",
+        font=small_font,
+    )
+
+    bg.save(output)
+
+    try:
+        os.remove(thumb_file)
+    except:
+        pass
 
     return output
