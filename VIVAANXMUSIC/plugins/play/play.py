@@ -29,6 +29,7 @@ from VIVAANXMUSIC.utils.logger import failure_logs, play_logs
 from VIVAANXMUSIC.utils.stream.source_status import get_youtube_source_status
 from VIVAANXMUSIC.utils.stream.stream import stream
 from VIVAANXMUSIC.utils.url_guard import is_safe_media_url
+from VIVAANXMUSIC.utils.thumbnails import get_thumb
 
 PLAYLIST_FETCH_LIMIT = int(
     getattr(
